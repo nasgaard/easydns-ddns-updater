@@ -1,0 +1,11 @@
+version: '3'
+services: 
+  proxy-ddns-update:
+    container_name: ddns-update
+    image: easydns-ddns-updater
+    environment:
+      - EASYDNS_USER=<id>
+      - EASYDNS_TOKEN=<token>
+      - EASYDNS_HOSTNAME=<domain>
+      - EASYDNS_UPDATE_PERIOD=600
+
