@@ -30,4 +30,4 @@ jobs:
       with:
         push: true
         context: .
-        tags: nasgaard/easydnd-ddns-updater:latest, nasgaard/easydnd-ddns-updater:${{ github.run_number }}
+        tags: nasgaard/easydns-ddns-updater:latest, nasgaard/easydns-ddns-updater:${{ github.run_number }}
