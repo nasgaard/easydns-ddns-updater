@@ -30,4 +30,5 @@ jobs:
       with:
         push: true
         context: .
+        platforms: linux/amd64, linux/arm32v5
         tags: nasgaard/easydns-ddns-updater:latest, nasgaard/easydns-ddns-updater:${{ github.run_number }}
