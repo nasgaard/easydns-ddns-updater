@@ -1,5 +1,6 @@
 
 import requests
+import dns.resolver
 from requests import get
 
 import time
@@ -15,37 +16,22 @@ if token is None:
 hostname = os.getenv('EASYDNS_HOSTNAME')
 if hostname is None:
 	sys.exit('EASYDNS_HOSTNAME is not set')
-delay = os.getenv('EASYDNS_UPDATE_PERIOD')
-if delay is None:
-	sys.exit('EASYDNS_UPDATE_PERIOD is not set')
-
-try:
-	delay = float(delay)
-except:
-	exit('EASYDNS_UPDATE_PERIOD is not valid')
-
-if delay < 600:
-	sys.exit('EASYDNS_UPDATE_PERIOD must be at least 600 seconds')
-
-# Need some error handling here
-ip = get('https://api.ipify.org', timeout=5.0).content.decode('utf8')
+delay = 610.0
 
 query = {'hostname':hostname}
 url = 'https://'+user+':'+token+'@api.cp.easydns.com/dyn/generic.php'
 
-# Perform an initial set of the IP
-response = requests.get(url, params=query)
-print(response.text)
+print('DDNS updater starting for hostname ' + hostname)
 
-print('Starting DDNS update loop for host '+hostname)
 while True:
+	current_ip = get('https://api.ipify.org', timeout=5.0).content.decode('utf8')
+	res = dns.resolver.resolve(hostname, 'A')
+	for item in res:
+		if (str(current_ip) != str(item)):
+			print('Current ip is ' + str(current_ip))
+			print('A record is ' + str(item))
+			print('A record needs update')
+			response = requests.get(url, params=query)
+			print(response.text)
+
 	time.sleep(delay)
-	newIP = get('https://api.ipify.org', timeout=5.0).content.decode('utf8')
-	print('new IP is: ' + newIP)
-	if (ip != newIP):
-		print('IP Needs updating')
-		response = requests.get(url, params=query)
-		print(response)	
-		print(response.text)
-	else:
-		print('No IP update needed')
